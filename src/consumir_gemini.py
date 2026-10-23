@@ -118,6 +118,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     return costo
 
 def parsear_respuestas_json(texto, claves_requeridas=None):
+    #datos = {"categoria": "lento", "abc": 1, "nivel": x}
     '''
     claves_requeridad = ["categoria", "nivel"]
     '''
@@ -135,11 +136,11 @@ def parsear_respuestas_json(texto, claves_requeridas=None):
             raise ValueError("La respuesta no tiene la estructura esperada.")
         return datos
 
-
-try:
-    print(obtener_dato_de_prueba("Hola, dime en una frace si es que la API esta funcionando"))
-except (ValueError, RuntimeError) as error:
-    print("No se pudo completar la operación. ", error)
+if __name__ == "__main__":
+    try:
+        print(obtener_dato_de_prueba("Hola, dime en una frace si es que la API esta funcionando"))
+    except (ValueError, RuntimeError) as error:
+        print("No se pudo completar la operación. ", error)
 
 '''
 Ejecute 4 veces la MISMA petición con 1 modelo
