@@ -136,7 +136,7 @@ def parsear_respuestas_json(texto, claves_requeridas=None):
             raise ValueError("La respuesta no tiene la estructura esperada.")
         return datos
 
-if __name__ == "__main__":
+if __name__ == "__main__": #Solamente ejecútalo si el archivo en el que estoy está siendo directamente ejecutado. NO LO EJECUTA EN IMPORTS
     try:
         print(obtener_dato_de_prueba("Hola, dime en una frace si es que la API esta funcionando"))
     except (ValueError, RuntimeError) as error:
