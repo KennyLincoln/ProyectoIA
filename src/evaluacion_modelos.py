@@ -48,8 +48,16 @@ def evaluar_modelo(nombre_modelo, pregunta, precio_entrada, precio_salida, repet
 pregunta_prueba = "¿Cual es la latencia"
 
 modelos = [
-    {"nombre": "gemini-3.6-flash", "precio_entrada": 0.00000010, "precio_salida": 0.00000030},
-    {"nombre": "gemini-3.1-flash-lite", "precio_entrada": 0.00000075, "precio_salida": 0.00000375},
+    {
+        "nombre": "gemini-3.6-flash",
+        "precio_entrada": 0.00000075,
+        "precio_salida": 0.00000375,
+    },
+    {
+        "nombre": "gemini-3.5-flash-lite",
+        "precio_entrada": 0.00000030,
+        "precio_salida": 0.00000250,
+    },
 ]
 
 if __name__ == "__main__":

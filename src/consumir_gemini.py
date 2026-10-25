@@ -128,7 +128,7 @@ def parsear_respuestas_json(texto, claves_requeridas=None):
     try:
         datos = json.loads(texto_limpio)
     except json.JSONDecodeError:
-        raise ValueError("La respuesta del modelo no es un JSON válido.")
+        raise ValueError("La respuesta no es un JSON válido.")
 
     if claves_requeridas:
         faltantes = [clave for clave in claves_requeridas if clave not in datos]

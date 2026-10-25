@@ -1,19 +1,25 @@
 # Decisión de arquitectura: elección del modelo
 
-Fecha de la comparación: Miercoles 21 de Octubre del 2026
-Nombre de la miniaplicación: "WIL"
+Fecha de la comparación: Miercoles 24 de Octubre del 2026
+Nombre de la miniaplicación: "WIL - Asistente de WATERisLIFE"
+
+La miniaplicación busca orientar a potenciales donantes sobre cómo
+colaborar, conocer el impacto de sus aportes y consultar información
+de transparencia. Utiliza prompts con respuestas estructuradas en JSON.
 
 ## Modelo elegido
 
-Elegí el modelo: **gemini-3.6-flash**
+Elegí el modelo: **gemini-3.6-flash-lite**
 
 Mi miniaplicación sirve para: Detectar el mejor modelo de IA según criterios determinados.
 
-Los requisitos que necesito cumplir son:
+Los criterios considerados fueron:
 
-* Respuestas rápidas, porque el usuario espera la respuesta en pantalla.
-* Disponibilidad estable, sin fallos frecuentes del servicio.
-* Costo bajo por petición.
+- Tiempo de respuesta.
+- Costo estimado por solicitud.
+- Éxito de las solicitudes.
+- Claridad de las respuestas.
+- Consistencia de la estructura JSON.
 
 ## Diagrama de arquitectura
 
@@ -21,33 +27,92 @@ Los requisitos que necesito cumplir son:
 
 ## Comparación de candidatos
 
-- Estas son las preguntas y condiciones con las cuales se midieron ambos modelos:
+Se realizaron cuatro solicitudes por modelo utilizando:
 
-* Preguntas y/o condiciones:
+- Pregunta: "¿Cual es la latencia".
+- Instrucción de sistema: "Eres un asistente amigable y respondes en máximo 2 frases."
+- El mismo script para ambos modelos.
 
-1. Pregunta enviada 4 veces a cada modelo: "¿Cual es la latencia".
-2. Misma instrucción de sistema en ambos: "Eres un asistente amigable y respondes en máximo 2 frases."
-3. Misma sesión de pruebas y mismas condiciones de red (21-10-2026).
+La latencia corresponde al tiempo medido por el script durante
+el envío y la recepción de la solicitud.
 
-| Criterio | gemini-3.6-flash | gemini-3.1-flash-lite |
+El costo se estima a partir del consumo de tokens informado por
+la API y las tarifas configuradas para cada modelo.
+
+## Resultados de la comparación
+
+| Criterio | gemini-3.6-flash | gemini-3.5-flash-lite |
 |---|---|---|
-| Tarifa de entrada en USD por millón de tokens | $0.10 | $0.75 |
-| Tarifa de salida en USD por millón de tokens | $0.30 | $3.75 |
-| Latencias observadas en segundos | 4.66, 4.47, 4.91, 4.61 | 23.27, 11.28 (2 intentos fallaron con error 503) |
-| Latencia promedio en segundos | 4.66 | 17.28 |
-| Costo promedio por petición (USD) | $0.000121 | $0.000119 |
-| Peticiones exitosas | 4 de 4 | 2 de 4 |
-| Calidad para nuestra miniaplicación | Buena: respuestas claras y coherentes, distintas entre intentos | Buena: respuesta coherente, pero idéntica en los dos intentos exitosos |
+| Tarifa de entrada: USD por millón de tokens de texto | 0.75 | 0.30 |
+| Tarifa de salida: USD por millón de tokens, incluyendo razonamiento | 3.75 | 2.50 |
+| Latencias observadas, en segundos | 6.01; 17.63; 5.92; 3.94 | 2.22; 2.26; 2.35; 2.70 |
+| Latencia promedio informada por el script | 8.37 segundos | 2.38 segundos |
+| Costo promedio estimado por solicitud | USD 0.001506 | USD 0.000102 |
+| Peticiones exitosas | 4 de 4 | 4 de 4 |
+| Errores en esta ejecución | Ninguno | Ninguno |
+| Calidad observada | Respuestas claras y relacionadas con la pregunta | Respuestas claras y relacionadas con la pregunta |
 
-Fuente de las tarifas:
+### Fuente de las tarifas
+
+Google — Gemini Developer API pricing:
+
+https://ai.google.dev/gemini-api/docs/pricing
+
+Se utilizaron las tarifas de la modalidad Standard, Paid Tier.
+Los costos presentados son estimaciones de referencia y no
+representan necesariamente cargos realizados en mi cuenta.
   
-## Justificación
+## Justificación de la elección
 
-Elegí gemini-3.6-flash porque para mi aplicación la rapidez de respuesta y la estabilidad importan más que el costo.
-Lo que observé en las pruebas fue que el costo por petición fue casi idéntico ($0.000121 frente a $0.000119), pero gemini-3.6-flash respondió en promedio en 4.66 segundos contra 17.28 segundos, y completó las 4 peticiones sin errores.
-El criterio más relevante para mi decisión fue la latencia, junto con la disponibilidad, ya que el costo no marcó diferencia.
-Una limitación que encontré en mi elección fue que 4.66 segundos sigue siendo una espera notable para el usuario, y que la muestra fue pequeña y de una sola sesión, así que los resultados podrían variar en otro momento.
+Elegí **gemini-3.5-flash-lite** porque, en esta comparación,
+presentó una latencia promedio de 2.38 segundos frente a
+8.37 segundos de gemini-3.6-flash.
 
-## Alternativa descartada y por qué
+También presentó un menor costo promedio estimado:
+USD 0.000102 frente a USD 0.001506 por solicitud.
 
-Descarté gemini-3.1-flash-lite porque, aunque su costo por petición fue igual de bajo, su latencia promedio fue unas 3.7 veces mayor (17.28 s) y falló en 2 de 4 peticiones con error 503 durante mi medición. Para una miniaplicación donde el usuario espera una respuesta ágil, esa lentitud e inconsistencia no se justifican.
+Ambos modelos completaron las cuatro solicitudes. Por ello,
+esta ejecución no muestra una diferencia en la tasa de éxito.
+La elección se fundamenta principalmente en el menor tiempo
+de respuesta y costo observados para Lite.
+
+## Alternativa descartada
+
+Descarté **gemini-3.6-flash** para esta versión de la
+miniaplicación porque presentó mayor latencia y costo estimado
+en la comparación realizada.
+
+Sus respuestas fueron claras y completó las cuatro solicitudes.
+La decisión corresponde a los criterios y resultados de esta prueba.
+
+## Consistencia del banco de prompts
+
+En una prueba independiente realizada con
+`gemini-3.5-flash-lite`, se obtuvieron estos resultados:
+
+| Prompt | Respuestas válidas | Intentos |
+|---|---|---|
+| Donaciones | 3 | 3 |
+| Impacto | 3 | 3 |
+| Transparencia | 3 | 3 |
+| Total | 9 | 9 |
+
+La prueba de consistencia verifica la estructura JSON mediante
+el validador del proyecto. Es independiente de la comparación
+de latencia y costo descrita anteriormente.
+
+## Limitaciones
+
+- Se realizaron solamente cuatro solicitudes por modelo.
+  Esta muestra es pequeña y no permite garantizar el mismo
+  rendimiento en otras ejecuciones.
+
+- La comparación utilizó una consulta general sobre latencia.
+  No constituye una evaluación completa de la calidad de las
+  respuestas sobre WATERisLIFE.
+
+- La prueba del banco de prompts comprueba la estructura de
+  las respuestas; no demuestra por sí sola su exactitud factual.
+
+- Los tiempos pueden variar según las condiciones de la red,
+  la carga del servicio y la extensión de la respuesta.
