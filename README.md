@@ -246,10 +246,7 @@ sea correcta.
 
 ### Registro del 24/10/2026
 
-- **Encontrado:** el archivo `cliente.py` correspondía a una unidad
-  posterior y quedaba fuera del alcance de esta entrega.
-- **Corregido:** se retiró `cliente.py` de la entrega del Gate 1.
-- **Resultado confirmado:** el repositorio se clonó satisfactoriamente.
+- **Encontrado:** el repositorio se clonó satisfactoriamente.
 
 ### Comprobaciones realizadas durante la preparación
 
