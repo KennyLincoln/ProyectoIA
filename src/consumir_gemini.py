@@ -47,6 +47,15 @@ def enviar_peticion(url, body):
     except requests.exceptions.Timeout:
         raise RuntimeError("Se agoto el tiempo. Intenta de nuevo en unos momentos.")
 
+    if respuesta.status_code in(401, 403):
+        raise ValueError("Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY")
+    if respuesta.status_code >= 500:
+        raise TimeoutError("El proveedor no pudo procesar la petición. Hay que esperar y reintentar")
+    if respuesta.status_code == 429:
+        segundos = respuesta.headers.get("Retry-After")
+        mensaje = f"Límite excedido. Reintentar en {segundos}s." if segundos else "Límite excedido."
+        raise TimeoutError(mensaje)
+        
     if respuesta.status_code != 200:
         raise RuntimeError(f"Error en la petición. Status Code:{respuesta.status_code}")
 
@@ -64,7 +73,7 @@ def extraer_texto(datos): #Gemini
 
 def obtener_dato_de_prueba(pregunta): # pregunta = "confirma la conexion"
 
-   response_Schema = {
+   response_schema = {
        "type": "OBJECT",
        "properties": {
            "categoria": {"type": "STRING"},
@@ -74,7 +83,7 @@ def obtener_dato_de_prueba(pregunta): # pregunta = "confirma la conexion"
    }
 
    system_instruction = "Eres un asistente amigable y respondes en máximo 2 palabras."
-   url, body = armar_peticion("gemini-3.6-flash", pregunta, system_instruction, response_Schema) #obtiene url y body
+   url, body = armar_peticion("gemini-3.6-flash", pregunta, system_instruction, response_schema) #obtiene url y body
 
    inicio = time.perf_counter() #Empezar el contador 
     
@@ -89,7 +98,7 @@ def obtener_dato_de_prueba(pregunta): # pregunta = "confirma la conexion"
    costo = calcular_costo(datos, 0.00000075, 0.00000375)
    print(f"Costo de la petición: ${costo:.6f} USD")
    texto = extraer_texto(datos)
-   datos_formateados = parsear_respuestas_json(texto, ["categoria", "nivel"])
+   datos_formateados = parsear_respuesta_json(texto, ["categoria", "nivel"])
    return datos_formateados
 
 #def calcular_costo(datos: dict, precio_entrada: float, precio_salida: float) -> float:
@@ -117,7 +126,7 @@ def calcular_costo(datos, precio_entrada, precio_salida):
     costo = (tokens_entrada * precio_entrada) + ((tokens_salida + tokens_razonamiento) * precio_salida)
     return costo
 
-def parsear_respuestas_json(texto, claves_requeridas=None):
+def parsear_respuesta_json(texto, claves_requeridas=None):
     #datos = {"categoria": "lento", "abc": 1, "nivel": x}
     '''
     claves_requeridad = ["categoria", "nivel"]
