@@ -1,7 +1,9 @@
 import json
 import time
+INTENTOS = 3
+
 from prompts.banco import BANCO_DE_PROMPT
-from consumir_gemini import armar_peticion, enviar_peticion, extraer_texto, parsear_respuestas_json
+from consumir_gemini import armar_peticion, enviar_peticion, extraer_texto, parsear_respuesta_json
 
 registro = {}
 
@@ -9,7 +11,7 @@ try:
     #Leer el archivo y guardarlo en una variable
     for prompt in BANCO_DE_PROMPT:
         exitos = 0
-        intentos = 3
+        
         for intento in range(INTENTOS):
             url, body = armar_peticion(
                 "gemini-3.5-flash-lite",
@@ -20,7 +22,7 @@ try:
             respuesta = enviar_peticion(url, body)
             texto = extraer_texto(respuesta)
             try:
-                datos = parsear_respuestas_json(texto, prompt["claves_esperadas"])
+                datos = parsear_respuesta_json(texto, prompt["claves_esperadas"])
                 exitos += 1 #exitos++
                 print(f"Respuesta: {datos}")
             except ValueError as error:
