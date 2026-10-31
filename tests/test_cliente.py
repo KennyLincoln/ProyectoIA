@@ -1,6 +1,6 @@
 from unittest.mock import patch, Mock
 import pytest
-from src.consumir_gemini import enviar_peticion
+from consumir_gemini import enviar_peticion
 
 import cliente
 
