@@ -45,7 +45,7 @@ def enviar_peticion(url, body):
     except requests.exceptions.ConnectionError:
         raise RuntimeError("No se pudo conectar con el servicio. Intenta de nuevo en unos momentos.")
     except requests.exceptions.Timeout:
-        raise RuntimeError("Se agoto el tiempo. Intenta de nuevo en unos momentos.")
+        raise TimeoutError("Se agoto el tiempo. Intenta de nuevo en unos momentos.")
 
     if respuesta.status_code in(401, 403):
         raise ValueError("Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY")
