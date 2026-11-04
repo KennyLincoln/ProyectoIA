@@ -29,30 +29,71 @@ texto_prueba = (
     "divide en tokens, un proceso llamado tokenización."
 )
 
-puntos = paso_extraccion.invoke(
-    {"texto": texto_prueba}
-    )
+#puntos = paso_extraccion.invoke(
+#   {"texto": texto_prueba}
+#   )
 
-print(puntos)
+#print(puntos)
 
 plantilla_simplificacion = PromptTemplate.from_template("Reescribe estos puntos en lenguaje simple, sin jerga técnica para alguien sin conocimientos previos: \n\n {puntos}")
 
 paso_simplificacion = plantilla_simplificacion | modelo | StrOutputParser()
 
-simple = paso_simplificacion.invoke(
-    {"puntos": puntos}
-)
+#simple = paso_simplificacion.invoke(
+#    {"puntos": puntos}
+#)
 
-print(simple)
+#print(simple)
 
 plantilla_formato = PromptTemplate.from_template("Convierte este texto en una lista de viñetas markdown de máximo 3 lineas, sin introducción: \n\n {texto_simple}")
 
-paso_formmato = plantilla_formato | modelo | StrOutputParser()
+paso_formato = plantilla_formato | modelo | StrOutputParser()
 
-formato = paso_formmato.invoke(
-    {"texto_simple": simple}
+#formato = paso_formato.invoke(
+#    {"texto_simple": simple}
+#)
+
+#print(formato)
+
+# Sintaxis lambda -> lambda argumentos: expresion
+cadena_tres_pasos = (
+    plantilla_extraccion
+    | modelo
+    | StrOutputParser()
+    | (lambda puntos: {"puntos": puntos})
+    | plantilla_simplificacion
+    | modelo
+    | StrOutputParser()
+    | (lambda texto_simple: {"texto_simple": texto_simple})
+    | plantilla_formato
+    | modelo
+    | StrOutputParser()
 )
 
-print(formato)
+#respuesta = cadena_tres_pasos.invoke(
+# {"texto": texto_prueba} #El diccionario que corresponde al primer paso/acción inicial
+#)
 
-#cadena_tres_pasos 
+#print(respuesta)
+
+def construir_cadena(modelo):
+    return (
+        plantilla_extraccion
+        | modelo
+        | StrOutputParser()
+        | (lambda puntos: {"puntos": puntos})
+        | plantilla_simplificacion
+        | modelo
+        | StrOutputParser()
+        | (lambda texto_simple: {"texto_simple": texto_simple})
+        | plantilla_formato
+        | modelo
+        | StrOutputParser()
+    )
+
+
+if __name__ == "__main__":
+    load_dotenv()
+    modelo = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
+    cadena_tres_pasos = construir_cadena(modelo)
+    print(cadena_tres_pasos.invoke({"texto": texto_prueba}))
