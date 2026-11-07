@@ -135,8 +135,7 @@ casos = [
 ]
 
 raiz = Path(__file__).resolve().parents[1]
-ruta_resultados = raiz / "resultados_metricas.json"
-
+ruta_resultados = raiz / "docs" / "resultados_metricas.json"
 # Recupera las respuestas guardadas en una ejecución anterior.
 if ruta_resultados.exists():
     with ruta_resultados.open(
